@@ -6,7 +6,7 @@ export const Input = ({
   placeholder,
   inputWithBtn,
   extraClass,
-  inputRef
+  inputRef,
 }) => {
   const className = `${styles.input} ${extraClass} ${
     inputWithBtn ? styles.input_withBtn : ""

@@ -4,7 +4,7 @@ import React, {
   useRef,
   useMemo,
   useState,
-  useContext
+  useContext,
 } from "react";
 import { getItemsRequest, applyPromoCodeRequest } from "../../services/fakeApi";
 import styles from "./products-container.module.css";
@@ -23,21 +23,21 @@ export const ProductsContainer = () => {
   const [promoFailed, setPromoFailed] = useState(false);
   const [promoRequest, setPromoRequest] = useState(false);
 
-  const inputRef = useRef(null);
+  const { setTotalPrice } = useContext(TotalPriceContext);
+  const { discountDispatcher } = useContext(DiscountContext);
 
-  const [totalPrice, setTotalPrice] = useContext(TotalPriceContext);
-  const [discount, setDiscount] = useContext(DiscountContext);
+  const inputRef = useRef(null);
 
   useEffect(() => {
     setItemsRequest(true);
     getItemsRequest()
-      .then(res => {
+      .then((res) => {
         if (res && res.success) {
           setData(res.data);
           setItemsRequest(false);
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         setItemsRequest(false);
       });
@@ -45,7 +45,7 @@ export const ProductsContainer = () => {
 
   useEffect(() => {
     let total = 0;
-    data.map(item => (total += item.price * item.qty));
+    data.map((item) => (total += item.price * item.qty));
     setTotalPrice(total);
   }, [data, setTotalPrice]);
 
@@ -53,10 +53,10 @@ export const ProductsContainer = () => {
     const inputValue = inputRef.current.value;
     setPromoRequest(true);
     applyPromoCodeRequest(inputValue)
-      .then(res => {
+      .then((res) => {
         if (res && res.success) {
           setPromo(inputValue);
-          setDiscount(res.discount);
+          discountDispatcher({ type: "set", payload: res.discount });
           setPromoRequest(false);
           setPromoFailed(false);
         } else {
@@ -66,31 +66,21 @@ export const ProductsContainer = () => {
           setPromo("");
         }
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
         setPromoRequest(false);
       });
-  }, [setDiscount]);
+  }, [discountDispatcher]);
 
   const content = useMemo(() => {
     return itemsRequest ? (
       <Loader size="large" />
     ) : (
       data.map((item, index) => {
-        return (
-          <Product
-            key={index}
-            discount={discount}
-            data={data}
-            setData={setData}
-            setTotalPrice={setTotalPrice}
-            totalPrice={totalPrice}
-            {...item}
-          />
-        );
+        return <Product key={index} {...item} />;
       })
     );
-  }, [itemsRequest, data, discount, setTotalPrice, totalPrice]);
+  }, [itemsRequest, data]);
 
   const promoCodeStatus = useMemo(() => {
     return promoFailed ? (

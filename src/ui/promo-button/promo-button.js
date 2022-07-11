@@ -6,7 +6,7 @@ import { DiscountContext } from "../../services/appContext";
 import { PromoContext } from "../../services/productsContext";
 
 export const PromoButton = ({ children, extraClass }) => {
-  const [discount, setDiscount] = useContext(DiscountContext);
+  const { discountDispatcher } = useContext(DiscountContext);
   const { setPromo } = useContext(PromoContext);
 
   const cancelPromo = () => {

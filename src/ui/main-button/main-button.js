@@ -7,10 +7,10 @@ export const MainButton = ({
   extraClass,
   inputButton,
   secondary,
-  onClick
+  onClick,
 }) => {
   useEffect(() => {
-    const listener = event => {
+    const listener = (event) => {
       if (event.key === "Enter" || event.code === "NumpadEnter") {
         console.log(
           "https://stackoverflow.com/questions/33211672/how-to-submit-a-form-using-enter-key-in-react-js"
